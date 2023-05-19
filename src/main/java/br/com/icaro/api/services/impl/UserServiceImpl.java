@@ -11,6 +11,8 @@ import br.com.icaro.api.domain.User;
 import br.com.icaro.api.domain.dto.UserDTO;
 import br.com.icaro.api.repositories.UserRepository;
 import br.com.icaro.api.services.UserService;
+import br.com.icaro.api.services.exceptions.DataIntegratyViolationException;
+import br.com.icaro.api.services.exceptions.ObjectNotFoundException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -24,7 +26,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public User findById(Integer id) {
 		Optional<User> userId = userRepository.findById(id);
-		return userId.orElse(null);
+		return userId.orElseThrow(() -> new ObjectNotFoundException("Objeto não encontrado"));
 	}
 	
 	public List<User> findAll() {
@@ -33,7 +35,15 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public User create(UserDTO userDTO) {
+		findByEmail(userDTO);
 		return userRepository.save(mapper.map(userDTO, User.class));
+	}
+	
+	private void findByEmail(UserDTO userDTO) {
+		Optional<User> user = userRepository.findByEmail(userDTO.getEmail());
+		if(user.isPresent()) {
+			throw new DataIntegratyViolationException("E-mail já cadastrado no sistema");
+		}
 	}
 
 }
