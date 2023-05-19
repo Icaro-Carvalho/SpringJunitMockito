@@ -1,5 +1,6 @@
 package br.com.icaro.api.services.impl;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,10 @@ public class UserServiceImpl implements UserService {
 	public User findById(Integer id) {
 		Optional<User> userId = userRepository.findById(id);
 		return userId.orElse(null);
+	}
+	
+	public List<User> findAll() {
+		return userRepository.findAll();
 	}
 
 }
