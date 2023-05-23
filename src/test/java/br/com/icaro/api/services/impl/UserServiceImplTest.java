@@ -1,10 +1,13 @@
 package br.com.icaro.api.services.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
@@ -64,8 +67,16 @@ class UserServiceImplTest {
 	}
 
 	@Test
-	void testFindAll() {
-		fail("Not yet implemented");
+	void whenFindAllThenReturnAnListOfUsers() {
+		when(userRepository.findAll()).thenReturn(List.of(user));
+		List<User> response = userServiceImpl.findAll();
+		assertNotNull(response);
+		assertEquals(1, response.size());
+		assertEquals(User.class, response.get(0).getClass());
+		assertEquals(user.getId(), response.get(0).getId());
+		assertEquals(user.getName(), response.get(0).getName());
+		assertEquals(user.getEmail(), response.get(0).getEmail());
+		assertEquals(user.getPassword(), response.get(0).getPassword());
 	}
 
 	@Test
