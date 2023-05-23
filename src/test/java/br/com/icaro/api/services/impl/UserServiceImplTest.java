@@ -2,6 +2,8 @@ package br.com.icaro.api.services.impl;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 
@@ -18,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import br.com.icaro.api.domain.User;
 import br.com.icaro.api.domain.dto.UserDTO;
 import br.com.icaro.api.repositories.UserRepository;
+import br.com.icaro.api.services.exceptions.ObjectNotFoundException;
 
 @SpringBootTest
 class UserServiceImplTest {
@@ -47,6 +50,17 @@ class UserServiceImplTest {
 		assertEquals(user.getId(), response.getId());
 		assertEquals(user.getName(), response.getName());
 		assertEquals(user.getEmail(), response.getEmail());
+	}
+	
+	@Test
+	void whenFindByIdThenReturnAnObjectNotFoundException() {
+		when(userRepository.findById(anyInt())).thenThrow(new ObjectNotFoundException("Objeto não encontrado"));
+		try {
+			userServiceImpl.findById(user.getId());
+		} catch (Exception ex) {
+			assertEquals(ObjectNotFoundException.class, ex.getClass());
+			assertEquals("Objeto não encontrado", ex.getMessage());
+		}
 	}
 
 	@Test
